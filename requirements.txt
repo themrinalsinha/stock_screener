@@ -3,3 +3,5 @@ uvicorn
 jinja2
 yfinance
 sqlalchemy
+async-exit-stack
+async-generator

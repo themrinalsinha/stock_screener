@@ -2,7 +2,7 @@ from sqlalchemy import Column, Numeric, String, Integer
 from database import Base
 
 
-class User(Base):
+class Stock(Base):
     __tablename__ = "stocks"
 
     id             = Column(Integer, primary_key=True, index=True)
