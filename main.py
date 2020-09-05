@@ -38,7 +38,7 @@ def fetch_stock_data(id: int):
     db = SessionLocal()
     stock = db.query(Stock).filter(Stock.id == id).first()
 
-    yf_data = yf.Ticker("MSFT")
+    yf_data = yf.Ticker(stock.symbol)
     stock.ma50           = yf_data.info['fiftyDayAverage']
     stock.ma200          = yf_data.info['twoHundredDayAverage']
     stock.price          = yf_data.info['previousClose']
