@@ -1,6 +1,7 @@
+lxml
+jinja2
 fastapi
 uvicorn
-jinja2
 yfinance
 sqlalchemy
 async-exit-stack

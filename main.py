@@ -1,4 +1,5 @@
 import models
+import yfinance         as yf
 from fastapi            import FastAPI, Request, Depends, BackgroundTasks
 from fastapi.templating import Jinja2Templates
 from sqlalchemy.orm     import Session
@@ -37,7 +38,13 @@ def fetch_stock_data(id: int):
     db = SessionLocal()
     stock = db.query(Stock).filter(Stock.id == id).first()
 
-    stock.forward_pe = 10
+    yf_data = yf.Ticker("MSFT")
+    stock.ma50           = yf_data.info['fiftyDayAverage']
+    stock.ma200          = yf_data.info['twoHundredDayAverage']
+    stock.price          = yf_data.info['previousClose']
+    stock.forward_pe     = yf_data.info['forwardPE']
+    stock.forward_eps    = yf_data.info['forwardEps']
+    stock.dividend_yield = yf_data.info['dividendYield'] * 100
 
     db.add(stock)
     db.commit()
