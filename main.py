@@ -1,10 +1,10 @@
 import models
-from fastapi import FastAPI, Request, Depends
+from fastapi            import FastAPI, Request, Depends, BackgroundTasks
 from fastapi.templating import Jinja2Templates
-from sqlalchemy.orm import Session
-from database import SessionLocal, engine
-from pydantic import BaseModel
-from models import Stock
+from sqlalchemy.orm     import Session
+from database           import SessionLocal, engine
+from pydantic           import BaseModel
+from models             import Stock
 
 models.Base.metadata.create_all(bind=engine)
 
@@ -15,6 +15,9 @@ class StockRequest(BaseModel):
     symbol: str
 
 def get_db():
+    """
+    this function helps us to get the database session
+    """
     try:
         db = SessionLocal()
         yield db
@@ -30,8 +33,18 @@ def home(request: Request):
         'request': request
     })
 
+def fetch_stock_data(id: int):
+    db = SessionLocal()
+    stock = db.query(Stock).filter(Stock.id == id).first()
+
+    stock.forward_pe = 10
+
+    db.add(stock)
+    db.commit()
+
+
 @app.post("/stock")
-def create_stock(stock_request: StockRequest, db: Session = Depends(get_db)):
+def create_stock(stock_request: StockRequest, background_tasks: BackgroundTasks, db: Session = Depends(get_db)):
     """
     Created a stock and store it in the database
     """
@@ -39,6 +52,8 @@ def create_stock(stock_request: StockRequest, db: Session = Depends(get_db)):
     stock.symbol = stock_request.symbol
     db.add(stock)
     db.commit()
+
+    background_tasks.add_task(fetch_stock_data, stock.id)
 
     return {
         "code":    "success",
