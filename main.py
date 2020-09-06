@@ -1,4 +1,4 @@
-import pdb
+from turtle import forward
 import models
 import yfinance         as yf
 from fastapi            import FastAPI, Request, Depends, BackgroundTasks
@@ -34,11 +34,31 @@ def home(request: Request, db: Session = Depends(get_db)):
     stocks = db.query(Stock)
 
     _filters = request.query_params
-    stocks   = stocks.filter_by(**dict(_filters))
+    # TODO: exact filter as passed in query_params
+    # stocks   = stocks.filter_by(**dict(_filters))
+
+    _ma_50          = _filters.get("ma_50")
+    _ma_200         = _filters.get("ma_200")
+    _forward_pe     = _filters.get("forward_pe")
+    _dividend_yield = _filters.get("dividend_yield")
+
+    if _ma_50:
+        stocks = stocks.filter(Stock.price > Stock.ma50)
+
+    if _ma_200:
+        stocks = stocks.filter(Stock.price > Stock.ma200)
+
+    if _forward_pe:
+        stocks = stocks.filter(Stock.forward_pe < _forward_pe)
+
+    if _dividend_yield:
+        stocks = stocks.filter(Stock.dividend_yield > _dividend_yield)
+
 
     return templates.TemplateResponse("home.html", {
         'request': request,
         'stocks' : stocks.all(),
+        **_filters,
     })
 
 def fetch_stock_data(id: int):

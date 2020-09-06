@@ -5,20 +5,20 @@ Hello this is the dashboard page <br/>
 
 <form>
     <div class="ui input">
-        <input name="forward_pe" type="text" placeholder="P/E Ratio">
+        <input name="forward_pe" value="{{ forward_pe }}" type="text" placeholder="P/E Ratio">
     </div>
 
     <div class="ui input">
-        <input name="dividend_yield" type="text" placeholder="Dividend Yield">
+        <input name="dividend_yield" value="{{ dividend_yield }}" type="text" placeholder="Dividend Yield">
     </div>
 
     <div class="ui checkbox">
-        <input type="checkbox" name="ma_50">
+        <input type="checkbox" name="ma_50" {% if ma_50 %} checked {% endif %}>
         <label>Above 50 day MA</label>
     </div>
 
     <div class="ui checkbox">
-        <input type="checkbox" name="ma_200">
+        <input type="checkbox" name="ma_200" {% if ma_200 %} checked {% endif %}>
         <label>Above 200 day MA</label>
     </div>
 
