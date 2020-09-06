@@ -31,14 +31,14 @@ def home(request: Request, db: Session = Depends(get_db)):
     """
     Displays the stock screener homepage
     """
-    stocks = db.query(Stock).all()
+    stocks = db.query(Stock)
 
     _filters = request.query_params
-    stocks = stocks.filter(**dict(_filters))
+    stocks   = stocks.filter_by(**dict(_filters))
 
     return templates.TemplateResponse("home.html", {
         'request': request,
-        'stocks' : stocks,
+        'stocks' : stocks.all(),
     })
 
 def fetch_stock_data(id: int):
