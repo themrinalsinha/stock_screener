@@ -1,3 +1,4 @@
+import pdb
 import models
 import yfinance         as yf
 from fastapi            import FastAPI, Request, Depends, BackgroundTasks
@@ -26,12 +27,18 @@ def get_db():
         db.close()
 
 @app.get("/")
-def home(request: Request):
+def home(request: Request, db: Session = Depends(get_db)):
     """
     Displays the stock screener homepage
     """
+    stocks = db.query(Stock).all()
+
+    _filters = request.query_params
+    stocks = stocks.filter(**dict(_filters))
+
     return templates.TemplateResponse("home.html", {
-        'request': request
+        'request': request,
+        'stocks' : stocks,
     })
 
 def fetch_stock_data(id: int):

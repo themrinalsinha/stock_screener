@@ -3,51 +3,54 @@
 {% block content %}
 Hello this is the dashboard page <br/>
 
-<div class="ui input">
-    <input type="text" placeholder="P/E Ratio">
-</div>
+<form>
+    <div class="ui input">
+        <input name="forward_pe" type="text" placeholder="P/E Ratio">
+    </div>
 
-<div class="ui input">
-    <input type="text" placeholder="Dividend Yield">
-</div>
+    <div class="ui input">
+        <input name="dividend_yield" type="text" placeholder="Dividend Yield">
+    </div>
 
-<div class="ui checkbox">
-    <input type="checkbox" name="example">
-    <label>Above 50 day MA</label>
-</div>
+    <div class="ui checkbox">
+        <input type="checkbox" name="ma_50">
+        <label>Above 50 day MA</label>
+    </div>
 
-<div class="ui checkbox">
-    <input type="checkbox" name="example ">
-    <label>Above 200 day MA</label>
-</div>
+    <div class="ui checkbox">
+        <input type="checkbox" name="ma_200">
+        <label>Above 200 day MA</label>
+    </div>
 
-<button class="ui button primary">Filter</button>
+    <button type="submit" class="ui button primary">Filter</button>
+</form>
+
 <button class="ui button add-stock-btn">Add Stock</button>
 
 <table class="ui celled table">
     <thead>
         <tr>
             <th>Symbol</th>
-            <th>P/E</th>
+            <th>Price</th>
+            <th>Forward PE</th>
+            <th>Forward EPS</th>
             <th>Dividend Yield</th>
+            <th>MA50</th>
+            <th>MA200</th>
         </tr>
     </thead>
     <tbody>
+        {% for stock in stocks %}
         <tr>
-            <td data-label="Name">MSFT</td>
-            <td data-label="Age">10</td>
-            <td data-label="Job">2</td>
+            <td data-label="symbol">{{ stock.symbol }}</td>
+            <td data-label="price">{{ stock.price }}</td>
+            <td data-label="forward_pe">{{ stock.forward_pe }}</td>
+            <td data-label="forward_eps">{{ stock.forward_eps }}</td>
+            <td data-label="dividend_yield">{{ stock.dividend_yield }}</td>
+            <td data-label="ma50">{{ stock.ma50 }}</td>
+            <td data-label="ma200">{{ stock.ma200 }}</td>
         </tr>
-        <tr>
-            <td data-label="Name">APPL</td>
-            <td data-label="Age">26</td>
-            <td data-label="Job">2</td>
-        </tr>
-        <tr>
-            <td data-label="Name">FB</td>
-            <td data-label="Age">24</td>
-            <td data-label="Job">10</td>
-        </tr>
+        {% endfor %}
     </tbody>
 </table>
 
