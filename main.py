@@ -39,12 +39,12 @@ def fetch_stock_data(id: int):
     stock = db.query(Stock).filter(Stock.id == id).first()
 
     yf_data = yf.Ticker(stock.symbol)
-    stock.ma50           = yf_data.info['fiftyDayAverage']
-    stock.ma200          = yf_data.info['twoHundredDayAverage']
-    stock.price          = yf_data.info['previousClose']
-    stock.forward_pe     = yf_data.info['forwardPE']
-    stock.forward_eps    = yf_data.info['forwardEps']
-    stock.dividend_yield = yf_data.info['dividendYield'] * 100
+    stock.ma50           = yf_data.info.get('fiftyDayAverage')
+    stock.ma200          = yf_data.info.get('twoHundredDayAverage')
+    stock.price          = yf_data.info.get('previousClose')
+    stock.forward_pe     = yf_data.info.get('forwardPE')
+    stock.forward_eps    = yf_data.info.get('forwardEps')
+    stock.dividend_yield = yf_data.info.get('dividendYield')
 
     db.add(stock)
     db.commit()
@@ -55,10 +55,12 @@ def create_stock(stock_request: StockRequest, background_tasks: BackgroundTasks,
     """
     Created a stock and store it in the database
     """
-    stock = Stock()
-    stock.symbol = stock_request.symbol
-    db.add(stock)
-    db.commit()
+    stock = db.query(Stock).filter(Stock.symbol == stock_request.symbol).first()
+    if not stock:
+        stock = Stock()
+        stock.symbol = stock_request.symbol
+        db.add(stock)
+        db.commit()
 
     background_tasks.add_task(fetch_stock_data, stock.id)
 

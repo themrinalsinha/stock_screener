@@ -22,6 +22,7 @@ Hello this is the dashboard page <br/>
 </div>
 
 <button class="ui button primary">Filter</button>
+<button class="ui button add-stock-btn">Add Stock</button>
 
 <table class="ui celled table">
     <thead>
@@ -49,4 +50,58 @@ Hello this is the dashboard page <br/>
         </tr>
     </tbody>
 </table>
+
+<!-- modal -->
+<div class="ui modal">
+    <i class="close icon"></i>
+    <div class="header">
+      Add Stock Symbol
+    </div>
+    <div class="content">
+        <div class="ui form">
+            <div class="field">
+                <label>Enter Stock Symbols</label>
+                <textarea id="symbols-text"></textarea>
+            </div>
+        </div>
+    </div>
+    <div class="actions">
+      <div class="ui black deny button">
+        Nope
+      </div>
+      <div id="save-stock" class="ui positive right labeled icon button">
+        Add symbols
+        <i class="checkmark icon"></i>
+      </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+    $(document).ready(function() {
+        $(".add-stock-btn").click(() => {
+            $(".ui.modal").modal("show")
+        })
+
+        $("#save-stock").click(() => {
+            let _symbols      = $("#symbols-text").val()
+            let stock_symbols = _symbols.split("\n")
+
+            stock_symbols.forEach(element => {
+                console.log(element)
+                $.ajax({
+                    url         : "/stock",
+                    type        : "POST",
+                    contentType : "application/json",
+                    dataType    : "json",
+                    data        : JSON.stringify({"symbol": element})
+                })
+            })
+
+            $(".ui.modal").modal("hide")
+        })
+    })
+</script>
 {% endblock %}
